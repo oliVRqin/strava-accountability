@@ -1,18 +1,43 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-
+  const [activityData, setActivityData] = useState([]);
   useEffect(() => {
       async function fetchAPI() {
-        const url = `${process.env.NEXT_PUBLIC_URL}?access_token=${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`;
+        const url = `${process.env.NEXT_PUBLIC_URL}?per_page=200&access_token=${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`;
         const response = await fetch(url);
         const data = await response.json();
-        console.log(data);
+        if (data.message == "Authorization Error") {
+          console.log("auth error triggered");
+          const post_url = `https://www.strava.com/api/v3/oauth/token?client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&client_secret=${process.env.NEXT_PUBLIC_CLIENT_SECRET}&grant_type=refresh_token&refresh_token=${process.env.NEXT_PUBLIC_REFRESH_TOKEN}`
+          const post_response = await fetch(post_url, { method: "POST" })
+          const post_data = await post_response.json();
+          const url = `${process.env.NEXT_PUBLIC_URL}?per_page=200&access_token=${post_data.access_token}`;
+          const response = await fetch(url);
+          const data = await response.json();
+          setActivityData(data);
+        } else {
+          setActivityData(data);
+        }
       }
       fetchAPI();
   }, [])
+
+  console.log(activityData);
+  const displayActivityData = activityData.map((activity) => {
+    // If activity.type is Run or Bike, include the mileage and average speed. Mileage is under the distance attribute,
+    // and is measured in meters. Average speed is under the average_speed attribute, and is measured in meters/second.
+    return (
+      <div className={styles.card}>
+        <p>{activity.name}</p>
+        <p>{activity.type}</p>
+        <p>{activity.start_date_local}</p>
+        <p>{activity.moving_time}</p>
+      </div>
+    )
+  })
   
   return (
     <div className={styles.container}>
@@ -28,6 +53,9 @@ export default function Home() {
         <p className={styles.description}>Every mile I run, or day I lift, I will reward myself in some way.</p>
         <p className={styles.description}>A potential idea is doing the GitHub progress bar but for Strava. Another idea
         would include paying myself in Ethereum or something.</p>
+        <div className={styles.grid}>
+          {displayActivityData}
+        </div>
       </main>
     </div>
   )
