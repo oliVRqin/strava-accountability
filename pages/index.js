@@ -26,17 +26,52 @@ export default function Home() {
   }, [])
 
   console.log(activityData);
+
+  // Build the GitHub contributions calendar but for Strava workouts next. Areas to start would be the UI:
+  // do a grid of super-small squares which change chade of color relative to how many workouts a day.
+  // In this grid, each passing day creates a new square as well. A counter of 'contributions' per year is 
+  // also shown above. 
   const displayActivityData = activityData.map((activity) => {
-    // If activity.type is Run or Bike, include the mileage and average speed. Mileage is under the distance attribute,
-    // and is measured in meters. Average speed is under the average_speed attribute, and is measured in meters/second.
-    return (
-      <div className={styles.card}>
-        <p>{activity.name}</p>
-        <p>{activity.type}</p>
-        <p>{activity.start_date_local}</p>
-        <p>{activity.moving_time}</p>
-      </div>
-    )
+    if (activity.type == "Run" || activity.type == "Ride") {
+      let movingTime = activity.moving_time;
+      let movingTimeHours = Math.floor(movingTime/3600);
+      movingTime = movingTime - (3600 * movingTimeHours);
+      let movingTimeMinutes = Math.floor(movingTime/60);
+      movingTime = movingTime - (60 * movingTimeMinutes);
+      let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
+      let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
+      let startDate = activity.start_date_local.split("T")[0];
+      let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
+      return (
+        <div className={styles.card}>
+          <p>{`Activity Description: ${activity.name}`}</p>
+          <p>{`Activity Type: ${activity.type}`}</p>
+          <p>{`Start Date: ${startDate}`}</p>
+          <p>{`Start Time: ${startTime}`}</p>
+          <p>{`Distance: ${distanceInMiles} miles`}</p>
+          <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
+          <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+        </div>
+      )
+    } else if (activity.type == "WeightTraining") {
+      let movingTime = activity.moving_time;
+      let movingTimeHours = Math.floor(movingTime/3600);
+      movingTime = movingTime - (3600 * movingTimeHours);
+      let movingTimeMinutes = Math.floor(movingTime/60);
+      movingTime = movingTime - (60 * movingTimeMinutes);
+      let startDate = activity.start_date_local.split("T")[0];
+      let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
+      return (
+        <div className={styles.card}>
+          <p>{`Activity Description: ${activity.name}`}</p>
+          <p>{`Activity Type: ${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
+          <p>{`Start Date: ${startDate}`}</p>
+          <p>{`Start Time: ${startTime}`}</p>
+          <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+        </div>
+      )
+    }
+
   })
   
   return (
