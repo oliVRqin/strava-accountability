@@ -98,6 +98,21 @@
   line-height: 1.5;
 }
 
+.contributionGrid {
+  overflow: hidden;
+  width: 828px;
+  height: 128px;
+  background-color: yellow;
+}
+
+.tinyCard {
+  height: 11px;
+  width: 11px;
+  color: brown;
+  background-color: gray;
+  border-radius: 2px;
+}
+
 @media (max-width: 2150px) {
   .card {
     width: 30%;

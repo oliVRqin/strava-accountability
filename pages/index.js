@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [activityData, setActivityData] = useState([]);
-  useEffect(() => {
+/*   useEffect(() => {
       async function fetchAPI() {
         const url = `${process.env.NEXT_PUBLIC_URL}?per_page=200&access_token=${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`;
         const response = await fetch(url);
@@ -25,12 +25,8 @@ export default function Home() {
       fetchAPI();
   }, [])
 
-  console.log(activityData);
+  console.log(activityData); */
 
-  // Build the GitHub contributions calendar but for Strava workouts next. Areas to start would be the UI:
-  // do a grid of super-small squares which change chade of color relative to how many workouts a day.
-  // In this grid, each passing day creates a new square as well. A counter of 'contributions' per year is 
-  // also shown above. 
   const displayActivityData = activityData.map((activity) => {
     if (activity.type == "Run" || activity.type == "Ride") {
       let movingTime = activity.moving_time;
@@ -71,8 +67,34 @@ export default function Home() {
         </div>
       )
     }
-
   })
+
+  // Build the GitHub contributions calendar but for Strava workouts next. Areas to start would be the UI:
+  // do a grid of super-small squares which change chade of color relative to how many workouts a day.
+  // In this grid, each passing day creates a new square as well. A counter of 'contributions' per year is 
+  // also shown above. 
+
+  const ContributionGrids = () => {
+    let columnArray = [];
+    for (let transformXCoords = 0; transformXCoords < 52; transformXCoords++) {
+      columnArray.push(
+        <g transform={`translate(${transformXCoords*16}, 0)`}>
+          <rect className={styles.tinyCard} x="16" y="0" rx="2" ry="2"></rect>
+          <rect className={styles.tinyCard} x="16" y="15" rx="2" ry="2"></rect>
+          <rect className={styles.tinyCard} x="16" y="30" rx="2" ry="2"></rect>
+          <rect className={styles.tinyCard} x="16" y="45" rx="2" ry="2"></rect>
+          <rect className={styles.tinyCard} x="16" y="60" rx="2" ry="2"></rect>
+          <rect className={styles.tinyCard} x="16" y="75" rx="2" ry="2"></rect>
+          <rect className={styles.tinyCard} x="16" y="90" rx="2" ry="2"></rect>
+        </g>
+      )
+    }
+    return (
+      columnArray.map((column) => {
+        return column;
+      })
+    )
+  }
   
   return (
     <div className={styles.container}>
@@ -88,6 +110,9 @@ export default function Home() {
         <p className={styles.description}>Every mile I run, or day I lift, I will reward myself in some way.</p>
         <p className={styles.description}>A potential idea is doing the GitHub progress bar but for Strava. Another idea
         would include paying myself in Ethereum or something.</p>
+        <svg className={styles.contributionGrid}>
+          <ContributionGrids />
+        </svg>
         <div className={styles.grid}>
           {displayActivityData}
         </div>
