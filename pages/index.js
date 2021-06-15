@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [activityData, setActivityData] = useState([]);
@@ -27,114 +27,90 @@ export default function Home() {
 
   console.log(activityData);
 
-  const displayActivityData = activityData.map((activity) => {
-    if (activity.type == "Run" || activity.type == "Ride") {
-      let movingTime = activity.moving_time;
-      let movingTimeHours = Math.floor(movingTime/3600);
-      movingTime = movingTime - (3600 * movingTimeHours);
-      let movingTimeMinutes = Math.floor(movingTime/60);
-      movingTime = movingTime - (60 * movingTimeMinutes);
-      let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
-      let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
-      let startDate = activity.start_date_local.split("T")[0];
-      let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
-      return (
-        <div className={styles.card}>
-          <p>{`Activity Description: ${activity.name}`}</p>
-          <p>{`Activity Type: ${activity.type}`}</p>
-          <p>{`Start Date: ${startDate}`}</p>
-          <p>{`Start Time: ${startTime}`}</p>
-          <p>{`Distance: ${distanceInMiles} miles`}</p>
-          <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
-          <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-        </div>
-      )
-    } else if (activity.type == "WeightTraining") {
-      let movingTime = activity.moving_time;
-      let movingTimeHours = Math.floor(movingTime/3600);
-      movingTime = movingTime - (3600 * movingTimeHours);
-      let movingTimeMinutes = Math.floor(movingTime/60);
-      movingTime = movingTime - (60 * movingTimeMinutes);
-      let startDate = activity.start_date_local.split("T")[0];
-      let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
-      return (
-        <div className={styles.card}>
-          <p>{`Activity Description: ${activity.name}`}</p>
-          <p>{`Activity Type: ${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
-          <p>{`Start Date: ${startDate}`}</p>
-          <p>{`Start Time: ${startTime}`}</p>
-          <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-        </div>
-      )
-    }
-  })
-
-  // Build the GitHub contributions calendar but for Strava workouts next. Areas to start would be the UI:
-  // do a grid of super-small squares which change chade of color relative to how many workouts a day.
-  // In this grid, each passing day creates a new square as well. A counter of 'contributions' per year is 
-  // also shown above. 
-
-/*   const hasExercisedOnDay = () => {
+  const DisplayActivityData = () => {
     return (
-
+      <div className={styles.grid}>
+        {activityData.map((activity) => {
+        if (activity.type == "Run" || activity.type == "Ride") {
+          let movingTime = activity.moving_time;
+          let movingTimeHours = Math.floor(movingTime/3600);
+          movingTime = movingTime - (3600 * movingTimeHours);
+          let movingTimeMinutes = Math.floor(movingTime/60);
+          movingTime = movingTime - (60 * movingTimeMinutes);
+          let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
+          let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
+          let startDate = activity.start_date_local.split("T")[0];
+          let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
+          return (
+            <div className={styles.card}>
+              <p>{`Activity Description: ${activity.name}`}</p>
+              <p>{`Activity Type: ${activity.type}`}</p>
+              <p>{`Start Date: ${startDate}`}</p>
+              <p>{`Start Time: ${startTime}`}</p>
+              <p>{`Distance: ${distanceInMiles} miles`}</p>
+              <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
+              <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+            </div>
+          )
+        } else if (activity.type == "WeightTraining") {
+          let movingTime = activity.moving_time;
+          let movingTimeHours = Math.floor(movingTime/3600);
+          movingTime = movingTime - (3600 * movingTimeHours);
+          let movingTimeMinutes = Math.floor(movingTime/60);
+          movingTime = movingTime - (60 * movingTimeMinutes);
+          let startDate = activity.start_date_local.split("T")[0];
+          let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
+          return (
+            <div className={styles.card}>
+              <p>{`Activity Description: ${activity.name}`}</p>
+              <p>{`Activity Type: ${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
+              <p>{`Start Date: ${startDate}`}</p>
+              <p>{`Start Time: ${startTime}`}</p>
+              <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+            </div>
+          )
+        }
+      })}
+      </div>
     )
-  } */
+  }
+
+  // Next tasks: Modify the GitHub contributions calendar so that we see the days of the week on the y-axis 
+  // (in a similar manner to how GitHub does it). Months as well if possible. Include a simple legend which says that 
+  // orange means exercised that day and red means not exercised. Also include a counter of 'contributions' per year 
+  // shown above. Finally, make it responsive (check out how GitHub does it, seems like overflow scroll-x?). In the future,
+  // maybe we could have different colors on the grid for different types of workouts?
 
   const ContributionGrids = () => {
-    const itemsRef = useRef([]);
-    let today = new Date();
-    //console.log(today.getMonth() + 1);
-    //console.log(today.getDate());
-    //console.log(today.getFullYear());
-    let date = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-    //console.log(date);
-    // console.log(today.setDate(today.getDate() - 1));
-    /* let yesterday = (d => new Date(d.setDate(d.getDate() - 1)))(new Date);
-    console.log(yesterday); */
-/*     activityData.map((activity) => {
-      console.log(activity);
-    }); */
-    let columnArray = [];
-    //for (let transformXCoords = 0; transformXCoords < 52; transformXCoords++) {
+    let daysArray = [];
     for (let transformXCoords = 0; transformXCoords < 365; transformXCoords++) {
-/*       columnArray.push(
-        <g transform={`translate(${816 - (transformXCoords * 16)}, 0)`}>
-          <rect ref={el => itemsRef.current[transformXCoords] = el} className={styles.tinyCard} x="0" y="0" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 6 - (7 * transformXCoords))))(new Date)}></rect>
-          <rect className={styles.tinyCard} x="0" y="15" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 5 - (7 * transformXCoords))))(new Date)}></rect>
-          <rect className={styles.tinyCard} x="0" y="30" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 4 - (7 * transformXCoords))))(new Date)}></rect>
-          <rect className={styles.tinyCard} x="0" y="45" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 3 - (7 * transformXCoords))))(new Date)}></rect>
-          <rect className={styles.tinyCard} x="0" y="60" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 2 - (7 * transformXCoords))))(new Date)}></rect>
-          <rect className={styles.tinyCard} x="0" y="75" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 1 - (7 * transformXCoords))))(new Date)}></rect>
-          <rect className={styles.tinyCard} x="0" y="90" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - (7 * transformXCoords))))(new Date)}></rect>
-        </g>
-      ) */
-      columnArray.push(
-        <rect ref={el => itemsRef.current[transformXCoords] = el} className={styles.tinyCard} x={780 - (Math.floor((transformXCoords-1)/7)*15)} y={90 - ((transformXCoords-1)*15-(Math.floor((transformXCoords-1)/7)*105))} rx="2" ry="2" date={(d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)}></rect>
+      daysArray.push(
+        <rect 
+          className={styles.tinyCard} 
+          style={{ fill: 'red' }}
+          x={780 - (Math.floor((transformXCoords-1)/7)*15)} 
+          y={90 - ((transformXCoords-1)*15-(Math.floor((transformXCoords-1)/7)*105))} 
+          rx="2" 
+          ry="2" 
+          date={(d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)}>
+        </rect>
       )
     }
-    //setDayArray(columnArray);
-    //console.log(itemsRef.current);
-    //console.log(columnArray);
-    //console.log(dayArray);
     return (
-      columnArray.map((column) => {
-        //console.log((column.props.date).split("T")[0]);
-        let currDate = JSON.stringify(column.props.date).substring(1).split("T")[0];
-        console.log(currDate);
-/*         console.log(refID);
-        console.log(itemsRef.length); */
-        activityData.map((activity) => {
-          let startDate = activity.start_date_local.split("T")[0];
-          //console.log("Activity", activity);
-
-          //console.log("Column Object Values (Children)", Object.values(column).getProperties());
-          
-/*           if (startDate === columnDate) {
-            host of columnDate turns from classname of tinycard to tinycardExercised
-          } */
-        });
-        return column;
-      })
+      <svg className={styles.contributionGrid}>
+        {daysArray.map((day) => {
+          let currDate = JSON.stringify(day.props.date).substring(1).split("T")[0];
+          // console.log(currDate);
+          // console.log(day);
+          activityData.map((activity) => {
+            let startDate = activity.start_date_local.split("T")[0];
+            if (startDate === currDate) {
+              day.props.style.fill = 'orange';
+            }
+          });
+          return day;
+        })}
+      </svg>
     )
   }
   return (
@@ -144,19 +120,11 @@ export default function Home() {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <main className={styles.main}>
         <h1 className={styles.title}>Strava Accountability App</h1>
-
         <p className={styles.description}>Every mile I run, or day I lift, I will reward myself in some way.</p>
-        <p className={styles.description}>A potential idea is doing the GitHub progress bar but for Strava. Another idea
-        would include paying myself in Ethereum or something.</p>
-        <svg className={styles.contributionGrid}>
-          <ContributionGrids />
-        </svg>
-        <div className={styles.grid}>
-          {displayActivityData}
-        </div>
+        <ContributionGrids />
+        <DisplayActivityData />
       </main>
     </div>
   )
