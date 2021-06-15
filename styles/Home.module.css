@@ -99,17 +99,26 @@
 }
 
 .contributionGrid {
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  overflow: visible;
   width: 828px;
   height: 128px;
-  background-color: yellow;
+  /* background-color: yellow; */
 }
 
 .tinyCard {
   height: 11px;
   width: 11px;
-  color: brown;
-  background-color: gray;
+  fill: red;
+  border-radius: 2px;
+}
+
+.tinyCardExercised {
+  height: 11px;
+  width: 11px;
+  fill: green;
   border-radius: 2px;
 }
 

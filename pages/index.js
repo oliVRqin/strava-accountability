@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function Home() {
   const [activityData, setActivityData] = useState([]);
-/*   useEffect(() => {
+  useEffect(() => {
       async function fetchAPI() {
         const url = `${process.env.NEXT_PUBLIC_URL}?per_page=200&access_token=${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`;
         const response = await fetch(url);
@@ -25,7 +25,7 @@ export default function Home() {
       fetchAPI();
   }, [])
 
-  console.log(activityData); */
+  console.log(activityData);
 
   const displayActivityData = activityData.map((activity) => {
     if (activity.type == "Run" || activity.type == "Ride") {
@@ -74,28 +74,69 @@ export default function Home() {
   // In this grid, each passing day creates a new square as well. A counter of 'contributions' per year is 
   // also shown above. 
 
+/*   const hasExercisedOnDay = () => {
+    return (
+
+    )
+  } */
+
   const ContributionGrids = () => {
+    const itemsRef = useRef([]);
+    let today = new Date();
+    //console.log(today.getMonth() + 1);
+    //console.log(today.getDate());
+    //console.log(today.getFullYear());
+    let date = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    //console.log(date);
+    // console.log(today.setDate(today.getDate() - 1));
+    /* let yesterday = (d => new Date(d.setDate(d.getDate() - 1)))(new Date);
+    console.log(yesterday); */
+/*     activityData.map((activity) => {
+      console.log(activity);
+    }); */
     let columnArray = [];
-    for (let transformXCoords = 0; transformXCoords < 52; transformXCoords++) {
-      columnArray.push(
-        <g transform={`translate(${transformXCoords*16}, 0)`}>
-          <rect className={styles.tinyCard} x="16" y="0" rx="2" ry="2"></rect>
-          <rect className={styles.tinyCard} x="16" y="15" rx="2" ry="2"></rect>
-          <rect className={styles.tinyCard} x="16" y="30" rx="2" ry="2"></rect>
-          <rect className={styles.tinyCard} x="16" y="45" rx="2" ry="2"></rect>
-          <rect className={styles.tinyCard} x="16" y="60" rx="2" ry="2"></rect>
-          <rect className={styles.tinyCard} x="16" y="75" rx="2" ry="2"></rect>
-          <rect className={styles.tinyCard} x="16" y="90" rx="2" ry="2"></rect>
+    //for (let transformXCoords = 0; transformXCoords < 52; transformXCoords++) {
+    for (let transformXCoords = 0; transformXCoords < 365; transformXCoords++) {
+/*       columnArray.push(
+        <g transform={`translate(${816 - (transformXCoords * 16)}, 0)`}>
+          <rect ref={el => itemsRef.current[transformXCoords] = el} className={styles.tinyCard} x="0" y="0" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 6 - (7 * transformXCoords))))(new Date)}></rect>
+          <rect className={styles.tinyCard} x="0" y="15" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 5 - (7 * transformXCoords))))(new Date)}></rect>
+          <rect className={styles.tinyCard} x="0" y="30" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 4 - (7 * transformXCoords))))(new Date)}></rect>
+          <rect className={styles.tinyCard} x="0" y="45" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 3 - (7 * transformXCoords))))(new Date)}></rect>
+          <rect className={styles.tinyCard} x="0" y="60" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 2 - (7 * transformXCoords))))(new Date)}></rect>
+          <rect className={styles.tinyCard} x="0" y="75" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - 1 - (7 * transformXCoords))))(new Date)}></rect>
+          <rect className={styles.tinyCard} x="0" y="90" rx="2" ry="2" date-data={(d => new Date(d.setDate(d.getDate() - (7 * transformXCoords))))(new Date)}></rect>
         </g>
+      ) */
+      columnArray.push(
+        <rect ref={el => itemsRef.current[transformXCoords] = el} className={styles.tinyCard} x={780 - (Math.floor((transformXCoords-1)/7)*15)} y={90 - ((transformXCoords-1)*15-(Math.floor((transformXCoords-1)/7)*105))} rx="2" ry="2" date={(d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)}></rect>
       )
     }
+    //setDayArray(columnArray);
+    //console.log(itemsRef.current);
+    //console.log(columnArray);
+    //console.log(dayArray);
     return (
       columnArray.map((column) => {
+        //console.log((column.props.date).split("T")[0]);
+        let currDate = JSON.stringify(column.props.date).substring(1).split("T")[0];
+        console.log(currDate);
+/*         console.log(refID);
+        console.log(itemsRef.length); */
+        activityData.map((activity) => {
+          let startDate = activity.start_date_local.split("T")[0];
+          //console.log("Activity", activity);
+
+          //console.log("Column Object Values (Children)", Object.values(column).getProperties());
+          
+/*           if (startDate === columnDate) {
+            host of columnDate turns from classname of tinycard to tinycardExercised
+          } */
+        });
         return column;
       })
     )
   }
-  
   return (
     <div className={styles.container}>
       <Head>
