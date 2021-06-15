@@ -76,10 +76,9 @@ export default function Home() {
   }
 
   // Next tasks: Modify the GitHub contributions calendar so that we see the days of the week on the y-axis 
-  // (in a similar manner to how GitHub does it). Months as well if possible. Include a simple legend which says that 
-  // orange means exercised that day and red means not exercised. Also include a counter of 'contributions' per year 
-  // shown above. Finally, make it responsive (check out how GitHub does it, seems like overflow scroll-x?). In the future,
-  // maybe we could have different colors on the grid for different types of workouts?
+  // (in a similar manner to how GitHub does it). Months as well if possible. Also include a counter of 
+  // 'contributions' per year shown above. Finally, make it responsive (check out how GitHub does it, seems 
+  // like overflow scroll-x?). 
 
   const ContributionGrids = () => {
     let daysArray = [];
@@ -87,7 +86,7 @@ export default function Home() {
       daysArray.push(
         <rect 
           className={styles.tinyCard} 
-          style={{ fill: 'red' }}
+          style={{ fill: '#d3d5d8' }}
           x={780 - (Math.floor((transformXCoords-1)/7)*15)} 
           y={90 - ((transformXCoords-1)*15-(Math.floor((transformXCoords-1)/7)*105))} 
           rx="2" 
@@ -105,7 +104,15 @@ export default function Home() {
           activityData.map((activity) => {
             let startDate = activity.start_date_local.split("T")[0];
             if (startDate === currDate) {
-              day.props.style.fill = 'orange';
+              if (activity.type == "Run") {
+                day.props.style.fill = 'limegreen';
+              } else if (activity.type == "Ride") {
+                day.props.style.fill = 'royalblue';
+              } else if (activity.type == "WeightTraining") {
+                day.props.style.fill = 'red';
+              } else {
+                day.props.style.fill = 'brown';
+              }
             }
           });
           return day;
@@ -124,6 +131,22 @@ export default function Home() {
         <h1 className={styles.title}>Strava Accountability App</h1>
         <p className={styles.description}>Every mile I run, or day I lift, I will reward myself in some way.</p>
         <ContributionGrids />
+        <div className={styles.legend}>
+          <svg className={styles.legendGrid}>
+            <rect className={styles.legendCard} style={{ fill: '#d3d5d8' }} x="15" y="15" rx="2" ry="2"></rect>
+            <rect className={styles.legendCard} style={{ fill: 'limegreen' }} x="15" y="49" rx="2" ry="2"></rect>
+            <rect className={styles.legendCard} style={{ fill: 'royalblue' }} x="15" y="83" rx="2" ry="2"></rect>
+            <rect className={styles.legendCard} style={{ fill: 'red' }} x="15" y="117" rx="2" ry="2"></rect>
+            <rect className={styles.legendCard} style={{ fill: 'brown' }} x="15" y="151" rx="2" ry="2"></rect>
+          </svg>
+          <div>
+            <p>None</p>
+            <p>Run</p>
+            <p>Bike</p>
+            <p>Lift</p>
+            <p>Other</p>
+          </div>
+        </div>
         <DisplayActivityData />
       </main>
     </div>

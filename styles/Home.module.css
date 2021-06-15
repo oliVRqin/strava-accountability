@@ -109,6 +109,23 @@
   border-radius: 2px;
 }
 
+.legend {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.legendGrid {
+  height: 200px;
+  width: 45px;
+}
+
+.legendCard {
+  height: 20px;
+  width: 20px;
+  border-radius: 2px;
+}
+
 @media (max-width: 2150px) {
   .card {
     width: 30%;
