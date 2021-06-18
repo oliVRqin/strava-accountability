@@ -78,8 +78,10 @@ export default function Home() {
   // Next tasks: Modify the GitHub contributions calendar so that we see the days of the week on the y-axis 
   // (in a similar manner to how GitHub does it). Months as well if possible. Include a simple legend which says that 
   // orange means exercised that day and red means not exercised. Also include a counter of 'contributions' per year 
-  // shown above. Finally, make it responsive (check out how GitHub does it, seems like overflow scroll-x?). In the future,
-  // maybe we could have different colors on the grid for different types of workouts?
+  // shown above. Finally, make it responsive (check out how GitHub does it, seems like overflow scroll-x?). 
+  
+  // In the future, maybe we could have different colors on the grid for different types of workouts? Another 
+  // thing would be to make the squares clickable, and a card pops up when clicked detailing the specifics of the workout.
 
   const ContributionGrids = () => {
     let daysArray = [];
