@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 
 export default function Home() {
   const [activityData, setActivityData] = useState([]);
-  const [displayBool, setDisplayBool] = useState(false);
+  const [displayClickedWorkout, setDisplayClickedWorkout] = useState(false);
+  const [displayGrid, setDisplayGrid] = useState(true);
   const [clickedDate, setClickedDate] = useState(null);
   const [isDark, setIsDark] = useState(false);
   // const anyName = useRef(null);
@@ -32,9 +33,86 @@ export default function Home() {
     }
   })
 
-  const DisplayClickedActivityData = () => {
+  useEffect(() => {
+    window.onresize = () => {
+      setDisplayGrid(window.innerWidth > 830 ? true : false)
+    }
+  })
+  
+
+  const DisplayActivityData = () => {
     return (
       <div className={styles.grid}>
+        {activityData.map((activity) => {
+        if (activity.type == "Run" || activity.type == "Ride") {
+          let movingTime = activity.moving_time;
+          let movingTimeHours = Math.floor(movingTime/3600);
+          movingTime = movingTime - (3600 * movingTimeHours);
+          let movingTimeMinutes = Math.floor(movingTime/60);
+          movingTime = movingTime - (60 * movingTimeMinutes);
+          let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
+          let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
+          let startDate = activity.start_date_local.split("T")[0];
+          let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
+          if (parseInt(startTime.substring(0, 2)) >= 12) {
+            if (parseInt(startTime.substring(0, 2)) >= 13) {
+              startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
+            }
+            startTime += " PM";
+          } else {
+            if (parseInt(startTime.substring(0, 2)) == 0) {
+              startTime = startTime.replace(startTime.substring(0, 2), "12");
+            }
+            startTime += " AM";
+          }
+          return (
+            <div className={styles.card}>
+              <p><b>{`${startDate}`}</b></p>
+              {/* <p>{`Activity Description: ${activity.name}`}</p> */}
+              <p>{`${activity.type}`}</p>
+              <p>{`Start: ${startTime}`}</p>
+              <p>{`Distance: ${distanceInMiles} miles`}</p>
+              <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
+              <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+            </div>
+          )
+        } else if (activity.type == "WeightTraining") {
+          let movingTime = activity.moving_time;
+          let movingTimeHours = Math.floor(movingTime/3600);
+          movingTime = movingTime - (3600 * movingTimeHours);
+          let movingTimeMinutes = Math.floor(movingTime/60);
+          movingTime = movingTime - (60 * movingTimeMinutes);
+          let startDate = activity.start_date_local.split("T")[0];
+          let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
+          if (parseInt(startTime.substring(0, 2)) >= 12) {
+            if (parseInt(startTime.substring(0, 2)) >= 13) {
+              startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
+            }
+            startTime += " PM";
+          } else {
+            if (parseInt(startTime.substring(0, 2)) == 0) {
+              startTime = startTime.replace(startTime.substring(0, 2), "12");
+            }
+            startTime += " AM";
+          }
+          return (
+            <div className={styles.card}>
+              <p><b>{`${startDate}`}</b></p>
+              {/* <p>{`Activity Description: ${activity.name}`}</p> */}
+              <p>{`${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
+              <p>{`Start: ${startTime}`}</p>
+              <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+            </div>
+          )
+        }
+      })}
+      </div>
+    )
+  }
+
+  const DisplayClickedActivityData = () => {
+    return (
+      <div className={styles.clickedGrid}>
         {activityData.map((activity) => {
           let startDate = activity.start_date_local.split("T")[0];
           if (startDate === clickedDate) {
@@ -108,6 +186,8 @@ export default function Home() {
   // Next tasks: On hover of each day grid, show the date of that particular grid.
 
   // Idea: For the ref, try to get the ref ID to be based off the date of the specific grid?
+  // Also there seems to be a slight bug where we move to the next day a few hours early.
+  // Also update the README and send an image after this is done.
 
 /*   const showGridDate = () => {
     var popup = document.getElementById("myPopup");
@@ -131,7 +211,7 @@ export default function Home() {
                 clickedDisplayBool = true;
               }
             })
-            setDisplayBool(clickedDisplayBool);
+            setDisplayClickedWorkout(clickedDisplayBool);
             setClickedDate(currDate);
           }}
           /* onMouseOver={() => {anyName.current.classList.toggle("show")}} */
@@ -213,18 +293,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <h1 className={styles.title}>Strava API Project</h1>
-        <p className={styles.description}><b>{activityData.length}</b> workouts in the past year</p>
-        <ContributionGrids />
-        <ContributionLegend />
-        {displayBool && <DisplayClickedActivityData />}
-        {!displayBool && <p className={styles.description}>Click on a <b>non-gray</b> square to see what workout I did on that specific day!</p>}
-        <br></br>
-        <br></br>
         <label className={styles.switch}>
           <input type="checkbox" />
           <span onClick={() => {setIsDark(!isDark)}} className={styles.slider}></span>
         </label>
+        <br></br>
+        <h1 className={styles.title}>Strava API Project</h1>
+        <p className={styles.description}><b>{activityData.length}</b> workouts in the past year</p>
+        {
+          displayGrid && 
+          <>
+            <ContributionGrids />
+            <ContributionLegend />
+            {displayClickedWorkout && <DisplayClickedActivityData />}
+            {!displayClickedWorkout && <p className={styles.description}>Click on a <b>non-gray</b> square to see what workout I did on that specific day!</p>}
+          </>
+        }
+        {!displayGrid && <DisplayActivityData />}
       </main>
     </div>
   )
