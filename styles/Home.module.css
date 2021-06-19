@@ -220,6 +220,14 @@ input:checked + .slider:before {
 
 /* Popup */
 
+/* Popup container - can be anything you want */
+/* .popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+} */
+
+/* The actual popup */
 .popuptext {
   visibility: hidden;
   width: 160px;
@@ -233,6 +241,23 @@ input:checked + .slider:before {
   bottom: 125%;
   left: 50%;
   margin-left: -80px;
+}
+
+/* Popup arrow */
+.popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.tinyCard .show {
+  visibility: visible;
 }
 
 @media (max-width: 2150px) {

@@ -7,6 +7,7 @@ export default function Home() {
   const [displayBool, setDisplayBool] = useState(false);
   const [clickedDate, setClickedDate] = useState(null);
   const [isDark, setIsDark] = useState(false);
+  // const anyName = useRef(null);
 
   useEffect(() => {
       async function fetchAPI() {
@@ -109,7 +110,8 @@ export default function Home() {
   // Idea: For the ref, try to get the ref ID to be based off the date of the specific grid?
 
 /*   const showGridDate = () => {
-
+    var popup = document.getElementById("myPopup");
+    popup.classList.toggle("show");
   } */
 
   const ContributionGrids = () => {
@@ -132,13 +134,13 @@ export default function Home() {
             setDisplayBool(clickedDisplayBool);
             setClickedDate(currDate);
           }}
-          onMouseOver={showGridDate}
+          /* onMouseOver={() => {anyName.current.classList.toggle("show")}} */
           x={780 - (Math.floor((transformXCoords - 1) / 7) * 15)} 
           y={90 - ((transformXCoords - 1) * 15 - (Math.floor((transformXCoords - 1) / 7) * 105))} 
           rx="2" 
           ry="2" 
           date={(d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)}>
-          {/* <span class="popuptext" id="myPopup">A Simple Popup!</span> */}
+         {/*  <div className={styles.popuptext} ref={anyName}>{JSON.stringify((d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)).substring(1).split("T")[0]}</div> */}
         </rect>
       )
     }
