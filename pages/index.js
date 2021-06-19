@@ -7,6 +7,7 @@ export default function Home() {
   const [displayClickedWorkout, setDisplayClickedWorkout] = useState(false);
   const [displayGrid, setDisplayGrid] = useState(true);
   const [clickedDate, setClickedDate] = useState(null);
+  const [numWorkouts, setNumWorkouts] = useState(0);
   const [isDark, setIsDark] = useState(false);
   // const anyName = useRef(null);
 
@@ -37,6 +38,7 @@ export default function Home() {
     window.onresize = () => {
       setDisplayGrid(window.innerWidth > 830 ? true : false)
     }
+    setDisplayGrid(window.innerWidth > 830 ? true : false)
   })
   
 
@@ -220,17 +222,20 @@ export default function Home() {
           rx="2" 
           ry="2" 
           date={(d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)}>
-         {/*  <div className={styles.popuptext} ref={anyName}>{JSON.stringify((d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)).substring(1).split("T")[0]}</div> */}
+          {/* <div className={styles.popuptext} ref={anyName}>{JSON.stringify((d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)).substring(1).split("T")[0]}</div> */}
         </rect>
       )
     }
+    let workouts = 0;
     return (
       <svg className={styles.contributionGrid}>
         {daysArray.map((day) => {
-          let currDate = JSON.stringify(day.props.date).substring(1).split("T")[0];
+          let currDate = JSON.stringify(day.props.date).substring(1).split("T")[0]; 
           activityData.map((activity) => {
             let startDate = activity.start_date_local.split("T")[0];
+            console.log(startDate);
             if (startDate === currDate) {
+              workouts++;
               if (activity.type == "Run") {
                 day.props.style.fill = 'limegreen';
               } else if (activity.type == "Ride") {
@@ -242,6 +247,7 @@ export default function Home() {
               }
             }
           });
+          setNumWorkouts(workouts);
           return day;
         })}
       </svg>
@@ -299,17 +305,17 @@ export default function Home() {
         </label>
         <br></br>
         <h1 className={styles.title}>Strava API Project</h1>
-        <p className={styles.description}><b>{activityData.length}</b> workouts in the past year</p>
         {
           displayGrid && 
           <>
+            <p className={styles.description}><b>{numWorkouts}</b> workouts in the past year</p>
             <ContributionGrids />
             <ContributionLegend />
             {displayClickedWorkout && <DisplayClickedActivityData />}
             {!displayClickedWorkout && <p className={styles.description}>Click on a <b>non-gray</b> square to see what workout I did on that specific day!</p>}
           </>
         }
-        {!displayGrid && <DisplayActivityData />}
+        {!displayGrid && <><p className={styles.workoutDescription}><b>Workouts</b></p><DisplayActivityData /></>}
       </main>
     </div>
   )
