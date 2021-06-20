@@ -292,7 +292,7 @@ export default function Home() {
           <span onClick={() => {setIsDark(!isDark)}} className={styles.slider}></span>
         </label>
         <br></br>
-        <h1 className={styles.title}>Strava API Project</h1>
+        <h1 className={styles.title}>Strava API Workout Visualizer</h1>
         {
           displayGrid && 
           <>
