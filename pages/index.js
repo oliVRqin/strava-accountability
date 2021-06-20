@@ -9,7 +9,7 @@ export default function Home() {
   const [clickedDate, setClickedDate] = useState(null);
   const [numWorkouts, setNumWorkouts] = useState(0);
   const [isDark, setIsDark] = useState(false);
-  // const anyName = useRef(null);
+  const [ifEverClick, setIfEverClick] = useState(false);
 
   useEffect(() => {
       async function fetchAPI() {
@@ -69,8 +69,7 @@ export default function Home() {
           }
           return (
             <div className={styles.card}>
-              <p><b>{`${startDate}`}</b></p>
-              {/* <p>{`Activity Description: ${activity.name}`}</p> */}
+              <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
               <p>{`${activity.type}`}</p>
               <p>{`Start: ${startTime}`}</p>
               <p>{`Distance: ${distanceInMiles} miles`}</p>
@@ -99,8 +98,7 @@ export default function Home() {
           }
           return (
             <div className={styles.card}>
-              <p><b>{`${startDate}`}</b></p>
-              {/* <p>{`Activity Description: ${activity.name}`}</p> */}
+              <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
               <p>{`${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
               <p>{`Start: ${startTime}`}</p>
               <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
@@ -141,8 +139,7 @@ export default function Home() {
               }
               return (
                 <div className={styles.clickedCard}>
-                  <p><b>{`${startDate}`}</b></p>
-                  {/* <p>{`Activity Description: ${activity.name}`}</p> */}
+                  <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
                   <p>{`${activity.type}`}</p>
                   <p>{`Start: ${startTime}`}</p>
                   <p>{`Distance: ${distanceInMiles} miles`}</p>
@@ -171,8 +168,7 @@ export default function Home() {
               }
               return (
                 <div className={styles.clickedCard}>
-                  <p><b>{`${startDate}`}</b></p>
-                  {/* <p>{`Activity Description: ${activity.name}`}</p> */}
+                  <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
                   <p>{`${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
                   <p>{`Start: ${startTime}`}</p>
                   <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
@@ -185,18 +181,8 @@ export default function Home() {
     )
   }
 
-  // Next tasks: On hover of each day grid, show the date of that particular grid.
-
-  // Idea: For the ref, try to get the ref ID to be based off the date of the specific grid?
-  // Also there seems to be a slight bug where we move to the next day a few hours early.
-  // Also update the README and send an image after this is done.
-
-/*   const showGridDate = () => {
-    var popup = document.getElementById("myPopup");
-    popup.classList.toggle("show");
-  } */
-
   const ContributionGrids = () => {
+    let workouts = 0;
     let daysArray = [];
     for (let transformXCoords = 0; transformXCoords < 365; transformXCoords++) {
       daysArray.push(
@@ -215,25 +201,27 @@ export default function Home() {
             })
             setDisplayClickedWorkout(clickedDisplayBool);
             setClickedDate(currDate);
+            setIfEverClick(true);
           }}
-          /* onMouseOver={() => {anyName.current.classList.toggle("show")}} */
           x={780 - (Math.floor((transformXCoords - 1) / 7) * 15)} 
           y={90 - ((transformXCoords - 1) * 15 - (Math.floor((transformXCoords - 1) / 7) * 105))} 
           rx="2" 
           ry="2" 
           date={(d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)}>
-          {/* <div className={styles.popuptext} ref={anyName}>{JSON.stringify((d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)).substring(1).split("T")[0]}</div> */}
         </rect>
       )
     }
-    let workouts = 0;
     return (
       <svg className={styles.contributionGrid}>
         {daysArray.map((day) => {
+          Date.prototype.toJSON = function(){
+              const hoursDiff = this.getHours() - this.getTimezoneOffset() / 60;
+              this.setHours(hoursDiff);
+              return this.toISOString();
+          };
           let currDate = JSON.stringify(day.props.date).substring(1).split("T")[0]; 
           activityData.map((activity) => {
             let startDate = activity.start_date_local.split("T")[0];
-            console.log(startDate);
             if (startDate === currDate) {
               workouts++;
               if (activity.type == "Run") {
@@ -312,7 +300,15 @@ export default function Home() {
             <ContributionGrids />
             <ContributionLegend />
             {displayClickedWorkout && <DisplayClickedActivityData />}
-            {!displayClickedWorkout && <p className={styles.description}>Click on a <b>non-gray</b> square to see what workout I did on that specific day!</p>}
+            {!displayClickedWorkout && !ifEverClick && <p className={styles.description}>Click on a <b>square</b> to see what workout I did on that specific day!</p>}
+            {
+              !displayClickedWorkout && 
+              ifEverClick && 
+              <div className={styles.clickedCard}>
+                <p><b className={styles.workoutDate}>{clickedDate}</b></p>
+                <p>No workout on this day!</p>
+              </div>
+            }
           </>
         }
         {!displayGrid && <><p className={styles.workoutDescription}><b>Workouts</b></p><DisplayActivityData /></>}
