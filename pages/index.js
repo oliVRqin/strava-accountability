@@ -1,6 +1,13 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import Logo from '../public/logo.ico'
+import Bike from '../public/light/bike_strava.png'
+import Running from '../public/light/running_strava.png'
+import Weights from '../public/light/weights_strava.png'
+import BikeDark from '../public/dark/bike_strava_dark.png'
+import RunningDark from '../public/dark/running_strava_dark.png'
+import WeightsDark from '../public/dark/weights_strava_dark.png'
 
 export default function Home() {
   const [activityData, setActivityData] = useState([]);
@@ -46,16 +53,16 @@ export default function Home() {
     return (
       <div className={styles.grid}>
         {activityData.map((activity) => {
+        let movingTime = activity.moving_time;
+        let movingTimeHours = Math.floor(movingTime/3600);
+        movingTime = movingTime - (3600 * movingTimeHours);
+        let movingTimeMinutes = Math.floor(movingTime/60);
+        movingTime = movingTime - (60 * movingTimeMinutes);
+        let startDate = activity.start_date_local.split("T")[0];
+        let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
         if (activity.type == "Run" || activity.type == "Ride") {
-          let movingTime = activity.moving_time;
-          let movingTimeHours = Math.floor(movingTime/3600);
-          movingTime = movingTime - (3600 * movingTimeHours);
-          let movingTimeMinutes = Math.floor(movingTime/60);
-          movingTime = movingTime - (60 * movingTimeMinutes);
           let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
           let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
-          let startDate = activity.start_date_local.split("T")[0];
-          let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
           if (parseInt(startTime.substring(0, 2)) >= 12) {
             if (parseInt(startTime.substring(0, 2)) >= 13) {
               startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
@@ -67,24 +74,30 @@ export default function Home() {
             }
             startTime += " AM";
           }
-          return (
-            <div className={styles.card}>
-              <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-              <p>{`${activity.type}`}</p>
-              <p>{`Start: ${startTime}`}</p>
-              <p>{`Distance: ${distanceInMiles} miles`}</p>
-              <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
-              <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-            </div>
-          )
+          if (activity.type == "Run") {
+            return (
+              <div className={styles.clickedCard}>   
+                <img src={Running} width="25%" height="25%"></img>
+                <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
+                <p>{`Start: ${startTime}`}</p>
+                <p>{`Distance: ${distanceInMiles} miles`}</p>
+                <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
+                <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+              </div>
+            )
+          } else {
+            return (
+              <div className={styles.clickedCard}>   
+                <img src={Bike} width="25%" height="25%"></img>
+                <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
+                <p>{`Start: ${startTime}`}</p>
+                <p>{`Distance: ${distanceInMiles} miles`}</p>
+                <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
+                <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+              </div>
+            )
+          }
         } else if (activity.type == "WeightTraining") {
-          let movingTime = activity.moving_time;
-          let movingTimeHours = Math.floor(movingTime/3600);
-          movingTime = movingTime - (3600 * movingTimeHours);
-          let movingTimeMinutes = Math.floor(movingTime/60);
-          movingTime = movingTime - (60 * movingTimeMinutes);
-          let startDate = activity.start_date_local.split("T")[0];
-          let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
           if (parseInt(startTime.substring(0, 2)) >= 12) {
             if (parseInt(startTime.substring(0, 2)) >= 13) {
               startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
@@ -97,9 +110,9 @@ export default function Home() {
             startTime += " AM";
           }
           return (
-            <div className={styles.card}>
+            <div className={styles.clickedCard}>
+              <img src={Weights} width="25%" height="25%" ></img>
               <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-              <p>{`${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
               <p>{`Start: ${startTime}`}</p>
               <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
             </div>
@@ -116,16 +129,16 @@ export default function Home() {
         {activityData.map((activity) => {
           let startDate = activity.start_date_local.split("T")[0];
           if (startDate === clickedDate) {
+            let movingTime = activity.moving_time;
+            let movingTimeHours = Math.floor(movingTime/3600);
+            movingTime = movingTime - (3600 * movingTimeHours);
+            let movingTimeMinutes = Math.floor(movingTime/60);
+            movingTime = movingTime - (60 * movingTimeMinutes);
+            let startDate = activity.start_date_local.split("T")[0];
+            let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
             if (activity.type == "Run" || activity.type == "Ride") {
-              let movingTime = activity.moving_time;
-              let movingTimeHours = Math.floor(movingTime/3600);
-              movingTime = movingTime - (3600 * movingTimeHours);
-              let movingTimeMinutes = Math.floor(movingTime/60);
-              movingTime = movingTime - (60 * movingTimeMinutes);
               let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
               let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
-              let startDate = activity.start_date_local.split("T")[0];
-              let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
               if (parseInt(startTime.substring(0, 2)) >= 12) {
                 if (parseInt(startTime.substring(0, 2)) >= 13) {
                   startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
@@ -137,24 +150,30 @@ export default function Home() {
                 }
                 startTime += " AM";
               }
-              return (
-                <div className={styles.clickedCard}>
-                  <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-                  <p>{`${activity.type}`}</p>
-                  <p>{`Start: ${startTime}`}</p>
-                  <p>{`Distance: ${distanceInMiles} miles`}</p>
-                  <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
-                  <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-                </div>
-              )
+              if (activity.type == "Run") {
+                return (
+                  <div className={styles.clickedCard}>   
+                    <img src={Running} width="25%" height="25%"></img>
+                    <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
+                    <p>{`Start: ${startTime}`}</p>
+                    <p>{`Distance: ${distanceInMiles} miles`}</p>
+                    <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
+                    <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+                  </div>
+                )
+              } else {
+                return (
+                  <div className={styles.clickedCard}>   
+                    <img src={Bike} width="25%" height="25%"></img>
+                    <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
+                    <p>{`Start: ${startTime}`}</p>
+                    <p>{`Distance: ${distanceInMiles} miles`}</p>
+                    <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
+                    <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
+                  </div>
+                )
+              }
             } else if (activity.type == "WeightTraining") {
-              let movingTime = activity.moving_time;
-              let movingTimeHours = Math.floor(movingTime/3600);
-              movingTime = movingTime - (3600 * movingTimeHours);
-              let movingTimeMinutes = Math.floor(movingTime/60);
-              movingTime = movingTime - (60 * movingTimeMinutes);
-              let startDate = activity.start_date_local.split("T")[0];
-              let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
               if (parseInt(startTime.substring(0, 2)) >= 12) {
                 if (parseInt(startTime.substring(0, 2)) >= 13) {
                   startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
@@ -168,8 +187,8 @@ export default function Home() {
               }
               return (
                 <div className={styles.clickedCard}>
+                  <img src={Weights} width="25%" height="25%" ></img>
                   <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-                  <p>{`${activity.type.replace(/([a-z])([A-Z])/, 't T')}`}</p>
                   <p>{`Start: ${startTime}`}</p>
                   <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
                 </div>
@@ -284,7 +303,7 @@ export default function Home() {
       <Head>
         <title>Strava API App</title>
         <meta name="description" content="Generated by create next app" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={Logo} />
       </Head>
       <main className={styles.main}>
         <label className={styles.switch}>
