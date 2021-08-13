@@ -2,12 +2,13 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { useEffect, useState } from 'react';
 import Logo from '../public/logo.ico'
-import Bike from '../public/light/bike_strava.png'
-import Running from '../public/light/running_strava.png'
-import Weights from '../public/light/weights_strava.png'
-import BikeDark from '../public/dark/bike_strava_dark.png'
-import RunningDark from '../public/dark/running_strava_dark.png'
-import WeightsDark from '../public/dark/weights_strava_dark.png'
+
+import Legend from '../components/legend'
+import Grids from '../components/grids'
+import ClickedWorkoutCardLight from '../components/clickedWorkoutCardLight'
+import ClickedWorkoutCardDark from '../components/clickedWorkoutCardDark'
+import WorkoutCardsLight from '../components/workoutCardsLight'
+import WorkoutCardsDark from '../components/workoutCardsDark'
 
 export default function Home() {
   const [activityData, setActivityData] = useState([]);
@@ -47,261 +48,11 @@ export default function Home() {
     }
     setDisplayGrid(window.innerWidth > 830 ? true : false)
   })
-  
-
-  const DisplayActivityData = () => {
-    return (
-      <div className={styles.grid}>
-        {activityData.map((activity) => {
-        let movingTime = activity.moving_time;
-        let movingTimeHours = Math.floor(movingTime/3600);
-        movingTime = movingTime - (3600 * movingTimeHours);
-        let movingTimeMinutes = Math.floor(movingTime/60);
-        movingTime = movingTime - (60 * movingTimeMinutes);
-        let startDate = activity.start_date_local.split("T")[0];
-        let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
-        if (activity.type == "Run" || activity.type == "Ride") {
-          let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
-          let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
-          if (parseInt(startTime.substring(0, 2)) >= 12) {
-            if (parseInt(startTime.substring(0, 2)) >= 13) {
-              startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
-            }
-            startTime += " PM";
-          } else {
-            if (parseInt(startTime.substring(0, 2)) == 0) {
-              startTime = startTime.replace(startTime.substring(0, 2), "12");
-            }
-            startTime += " AM";
-          }
-          if (activity.type == "Run") {
-            return (
-              <div className={styles.clickedCard}>   
-                <img src={Running} width="25%" height="25%"></img>
-                <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-                <p>{`Start: ${startTime}`}</p>
-                <p>{`Distance: ${distanceInMiles} miles`}</p>
-                <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
-                <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-              </div>
-            )
-          } else {
-            return (
-              <div className={styles.clickedCard}>   
-                <img src={Bike} width="25%" height="25%"></img>
-                <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-                <p>{`Start: ${startTime}`}</p>
-                <p>{`Distance: ${distanceInMiles} miles`}</p>
-                <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
-                <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-              </div>
-            )
-          }
-        } else if (activity.type == "WeightTraining") {
-          if (parseInt(startTime.substring(0, 2)) >= 12) {
-            if (parseInt(startTime.substring(0, 2)) >= 13) {
-              startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
-            }
-            startTime += " PM";
-          } else {
-            if (parseInt(startTime.substring(0, 2)) == 0) {
-              startTime = startTime.replace(startTime.substring(0, 2), "12");
-            }
-            startTime += " AM";
-          }
-          return (
-            <div className={styles.clickedCard}>
-              <img src={Weights} width="25%" height="25%" ></img>
-              <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-              <p>{`Start: ${startTime}`}</p>
-              <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-            </div>
-          )
-        }
-      })}
-      </div>
-    )
-  }
-
-  const DisplayClickedActivityData = () => {
-    return (
-      <div className={styles.clickedGrid}>
-        {activityData.map((activity) => {
-          let startDate = activity.start_date_local.split("T")[0];
-          if (startDate === clickedDate) {
-            let movingTime = activity.moving_time;
-            let movingTimeHours = Math.floor(movingTime/3600);
-            movingTime = movingTime - (3600 * movingTimeHours);
-            let movingTimeMinutes = Math.floor(movingTime/60);
-            movingTime = movingTime - (60 * movingTimeMinutes);
-            let startDate = activity.start_date_local.split("T")[0];
-            let startTime = activity.start_date_local.split("T")[1].substring(0, activity.start_date_local.split("T")[1].length - 1);
-            if (activity.type == "Run" || activity.type == "Ride") {
-              let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
-              let averageSpeedInMph = (activity.average_speed * 2.23694).toFixed(2);
-              if (parseInt(startTime.substring(0, 2)) >= 12) {
-                if (parseInt(startTime.substring(0, 2)) >= 13) {
-                  startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
-                }
-                startTime += " PM";
-              } else {
-                if (parseInt(startTime.substring(0, 2)) == 0) {
-                  startTime = startTime.replace(startTime.substring(0, 2), "12");
-                }
-                startTime += " AM";
-              }
-              if (activity.type == "Run") {
-                return (
-                  <div className={styles.clickedCard}>   
-                    <img src={Running} width="25%" height="25%"></img>
-                    <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-                    <p>{`Start: ${startTime}`}</p>
-                    <p>{`Distance: ${distanceInMiles} miles`}</p>
-                    <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
-                    <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-                  </div>
-                )
-              } else {
-                return (
-                  <div className={styles.clickedCard}>   
-                    <img src={Bike} width="25%" height="25%"></img>
-                    <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-                    <p>{`Start: ${startTime}`}</p>
-                    <p>{`Distance: ${distanceInMiles} miles`}</p>
-                    <p>{`Average Speed: ${averageSpeedInMph} mph`}</p>
-                    <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-                  </div>
-                )
-              }
-            } else if (activity.type == "WeightTraining") {
-              if (parseInt(startTime.substring(0, 2)) >= 12) {
-                if (parseInt(startTime.substring(0, 2)) >= 13) {
-                  startTime = startTime.replace(startTime.substring(0, 2), (parseInt(startTime.substring(0, 2)) % 12).toString());
-                }
-                startTime += " PM";
-              } else {
-                if (parseInt(startTime.substring(0, 2)) == 0) {
-                  startTime = startTime.replace(startTime.substring(0, 2), "12");
-                }
-                startTime += " AM";
-              }
-              return (
-                <div className={styles.clickedCard}>
-                  <img src={Weights} width="25%" height="25%" ></img>
-                  <p><b className={styles.workoutDate}>{`${startDate}`}</b></p>
-                  <p>{`Start: ${startTime}`}</p>
-                  <p>{(movingTimeHours > 0) ? `Workout Time: ${movingTimeHours} Hours, ${movingTimeMinutes} Minutes, ${movingTime} Seconds` : `Workout Time: ${movingTimeMinutes} Minutes, ${movingTime} Seconds`}</p>
-                </div>
-              )
-            }
-          }
-      })}
-      </div>
-    )
-  }
-
-  const ContributionGrids = () => {
-    let workouts = 0;
-    let daysArray = [];
-    for (let transformXCoords = 0; transformXCoords < 365; transformXCoords++) {
-      daysArray.push(
-        <rect 
-          className={styles.tinyCard} 
-          style={{ fill: '#d3d5d8' }}
-          onClick={() => {
-            let date = (d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date);
-            let currDate = JSON.stringify(date).substring(1).split("T")[0];
-            let clickedDisplayBool = false;
-            activityData.map((activity) => {
-              let startDate = activity.start_date_local.split("T")[0];
-              if (startDate === currDate) {
-                clickedDisplayBool = true;
-              }
-            })
-            setDisplayClickedWorkout(clickedDisplayBool);
-            setClickedDate(currDate);
-            setIfEverClick(true);
-          }}
-          x={780 - (Math.floor((transformXCoords - 1) / 7) * 15)} 
-          y={90 - ((transformXCoords - 1) * 15 - (Math.floor((transformXCoords - 1) / 7) * 105))} 
-          rx="2" 
-          ry="2" 
-          date={(d => new Date(d.setDate(d.getDate() - transformXCoords)))(new Date)}>
-        </rect>
-      )
-    }
-    return (
-      <svg className={styles.contributionGrid}>
-        {daysArray.map((day) => {
-          Date.prototype.toJSON = function(){
-              const hoursDiff = this.getHours() - this.getTimezoneOffset() / 60;
-              this.setHours(hoursDiff);
-              return this.toISOString();
-          };
-          let currDate = JSON.stringify(day.props.date).substring(1).split("T")[0]; 
-          activityData.map((activity) => {
-            let startDate = activity.start_date_local.split("T")[0];
-            if (startDate === currDate) {
-              workouts++;
-              if (activity.type == "Run") {
-                day.props.style.fill = 'limegreen';
-              } else if (activity.type == "Ride") {
-                day.props.style.fill = 'royalblue';
-              } else if (activity.type == "WeightTraining") {
-                day.props.style.fill = 'red';
-              } else {
-                day.props.style.fill = 'brown';
-              }
-            }
-          });
-          setNumWorkouts(workouts);
-          return day;
-        })}
-      </svg>
-    )
-  }
-
-  const ContributionLegend = () => {
-    return (
-      <div className={styles.legend}>
-        <div className={styles.legend}>
-          <svg className={styles.legendDemo}>
-            <rect className={styles.legendCard} style={{ fill: '#d3d5d8' }} x="15" y="17" rx="2" ry="2"></rect>
-          </svg>
-          <p>None</p>
-        </div>
-        <div className={styles.legend}>
-          <svg className={styles.legendDemo}>
-          <rect className={styles.legendCard} style={{ fill: 'limegreen' }} x="15" y="17" rx="2" ry="2"></rect>
-          </svg>
-          <p>Run</p>
-        </div>
-        <div className={styles.legend}>
-          <svg className={styles.legendDemo}>
-          <rect className={styles.legendCard} style={{ fill: 'royalblue' }} x="15" y="17" rx="2" ry="2"></rect>
-          </svg>
-          <p>Bike</p>
-        </div>
-        <div className={styles.legend}>
-          <svg className={styles.legendDemo}>
-            <rect className={styles.legendCard} style={{ fill: 'red' }} x="15" y="17" rx="2" ry="2"></rect>
-          </svg>
-          <p>Lift</p>
-        </div>
-        <div className={styles.legend}>
-          <svg className={styles.legendDemo}>
-            <rect className={styles.legendCard} style={{ fill: 'brown' }} x="15" y="17" rx="2" ry="2"></rect>
-          </svg>
-          <p>Other</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>Strava API App</title>
+        <title>Strava API Workout Visualizer</title>
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href={Logo} />
       </Head>
@@ -313,24 +64,55 @@ export default function Home() {
         <br></br>
         <h1 className={styles.title}>Strava API Workout Visualizer</h1>
         {
-          displayGrid && 
-          <>
-            <p className={styles.description}><b>{numWorkouts}</b> workouts in the past year</p>
-            <ContributionGrids />
-            <ContributionLegend />
-            {displayClickedWorkout && <DisplayClickedActivityData />}
-            {!displayClickedWorkout && !ifEverClick && <p className={styles.description}>Click on a <b>square</b> to see what workout I did on that specific day!</p>}
-            {
-              !displayClickedWorkout && 
-              ifEverClick && 
-              <div className={styles.clickedCard}>
-                <p><b className={styles.workoutDate}>{clickedDate}</b></p>
-                <p>No workout on this day!</p>
-              </div>
-            }
-          </>
+          displayGrid ? 
+            <>
+              <p className={styles.description}>
+                <b>{numWorkouts}</b> workouts in the past year
+              </p>
+              <Grids 
+                data={activityData} 
+                numWorkouts={setNumWorkouts} 
+                displayClickedWorkout={setDisplayClickedWorkout} 
+                clickedDate={setClickedDate} 
+                ifEverClick={setIfEverClick}
+              />
+              <Legend />
+              {
+                displayClickedWorkout ? 
+                  isDark ?
+                    <ClickedWorkoutCardDark 
+                      data={activityData} 
+                      clickedDate={clickedDate} 
+                    />
+                  :
+                    <ClickedWorkoutCardLight 
+                      data={activityData} 
+                      clickedDate={clickedDate} 
+                    />
+                :
+                  ifEverClick ?
+                    <div className={styles.clickedCard}>
+                      <p>
+                        <b className={styles.workoutDate}>{clickedDate}</b>
+                      </p>
+                      <p>No workout on this day!</p>
+                    </div>
+                  :
+                    <p className={styles.description}>
+                      Click on a <b>square</b> to see what workout I did on that specific day!
+                    </p>
+              }
+            </>
+          : 
+            <>
+                {
+                  isDark ?
+                    <WorkoutCardsDark data={activityData} />
+                  :
+                    <WorkoutCardsLight data={activityData} />
+                }
+            </>
         }
-        {!displayGrid && <><p className={styles.workoutDescription}><b>Workouts</b></p><DisplayActivityData /></>}
       </main>
     </div>
   )
