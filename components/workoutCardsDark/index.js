@@ -2,7 +2,7 @@ import styles from '../../styles/Home.module.css'
 import BikeDark from '../../public/dark/bike_strava_dark.png'
 import RunningDark from '../../public/dark/running_strava_dark.png'
 import WeightsDark from '../../public/dark/weights_strava_dark.png'
-import displayWorkoutStartAndEnd from '../../functions/displayWorkoutStartAndEnd'
+import displayStartAndEndTime from '../../functions/displayStartAndEndTime'
 
 const WorkoutCardsDark = ({ data }) => {
     console.log("DARK", data)
@@ -11,7 +11,7 @@ const WorkoutCardsDark = ({ data }) => {
           <p className={styles.workoutDescription}><b>Workouts</b></p>
           <div className={styles.grid}>
             {data.map((activity) => {
-                let displayWorkoutTimes = displayWorkoutStartAndEnd(activity.start_date, activity.elapsed_time)
+                let displayWorkoutTimes = displayStartAndEndTime(activity.start_date, activity.elapsed_time)
                 let startDate = activity.start_date_local.split("T")[0];
                 if (activity.type == "Run") {
                   let distanceInMiles = (activity.distance / 1609.34).toFixed(2);

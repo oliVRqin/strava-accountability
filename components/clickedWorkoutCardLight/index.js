@@ -2,14 +2,14 @@ import styles from '../../styles/Home.module.css'
 import Bike from '../../public/light/bike_strava.png'
 import Running from '../../public/light/running_strava.png'
 import Weights from '../../public/light/weights_strava.png'
-import displayWorkoutStartAndEnd from '../../functions/displayWorkoutStartAndEnd'
+import displayStartAndEndTime from '../../functions/displayStartAndEndTime'
 
 const ClickedWorkoutCardLight = ({ data, clickedDate }) => {
     return (
       <div className={styles.clickedGrid}>
         {data.filter(activity => activity.start_date_local.split("T")[0] === clickedDate)
           .map((activity) => {
-              let displayWorkoutTimes = displayWorkoutStartAndEnd(activity.start_date, activity.elapsed_time)
+              let displayWorkoutTimes = displayStartAndEndTime(activity.start_date, activity.elapsed_time)
               let startDate = activity.start_date_local.split("T")[0];
               if (activity.type == "Run") {
                 let distanceInMiles = (activity.distance / 1609.34).toFixed(2);
