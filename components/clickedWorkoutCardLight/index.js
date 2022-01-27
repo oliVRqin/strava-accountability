@@ -103,7 +103,14 @@ const ClickedWorkoutCardLight = ({ data, clickedDate }) => {
                     <br></br>
                     <div>
                       <i>Workout Time</i>
-                      <p>{displayWorkoutTimes}</p>
+                      {/* <p>{displayWorkoutTimes}</p> */}
+                      {
+                        (Math.floor(activity.elapsed_time / 60) > 59) 
+                        ?
+                          <p>{Math.floor(activity.elapsed_time / 60 / 60)} hour, {Math.floor(activity.elapsed_time / 60) - Math.floor(activity.elapsed_time / 60 / 60) * 60} minutes</p>
+                        :
+                          <p>{Math.floor(activity.elapsed_time / 60)} minutes</p>
+                      }
                     </div>
                     <br></br>
                     <div>
